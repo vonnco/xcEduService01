@@ -119,6 +119,7 @@ public class CmsPageService {
     public CmsPageResult add(CmsPage cmsPage){
         if (cmsPage == null){
             //抛出异常，非法参数异常..指定异常信息的内容
+            ExceptionCast.cast(CommonCode.INVALID_PARAM);
         }
         //校验页面名称、站点Id、页面webpath的唯一性
         CmsPage cmsPage1 = cmsPageRepository.findByPageNameAndSiteIdAndPageWebPath(cmsPage.getPageName(), cmsPage.getSiteId(), cmsPage.getPageWebPath());
@@ -230,6 +231,9 @@ public class CmsPageService {
         }
         //取出dataUrl
         String dataUrl = cmsPage.getDataUrl();
+        if (StringUtils.isEmpty(dataUrl)){
+            ExceptionCast.cast(CmsCode.CMS_GENERATEHTML_DATAURLISNULL);
+        }
         ResponseEntity<Map> forEntity = restTemplate.getForEntity(dataUrl, Map.class);
         Map body = forEntity.getBody();
         return body;
@@ -297,7 +301,7 @@ public class CmsPageService {
         //保存静态化文件
         CmsPage cmsPage = this.saveHtml(pageId, pageHtml);
         //发送消息
-        this.sendPostPage(pageId);
+        this.sendPostPage(cmsPage.getPageId());
         return new ResponseResult(CommonCode.SUCCESS);
     }
     //发送页面发布消息

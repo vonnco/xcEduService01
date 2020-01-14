@@ -40,7 +40,7 @@ public class CmsPageController implements CmsPageControllerApi {
     }
 
     @Override
-    @DeleteMapping("/del/{id}")//这里使用put方法，http方法中put表示更新
+    @DeleteMapping("/del/{id}")
     public ResponseResult delete(@PathVariable("id") String id) {
         return cmsPageService.delete(id);
     }

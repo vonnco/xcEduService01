@@ -10,7 +10,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.*;
 
 @Controller
-@RequestMapping("/freemarker")
+@RequestMapping("/freemarker")//不要使用@RestController,要输出html网页，restController输出的是json数据
 public class FreemarkerController {
 
     @Autowired
