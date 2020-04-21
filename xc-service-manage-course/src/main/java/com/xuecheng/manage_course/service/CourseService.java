@@ -4,6 +4,7 @@ import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.xuecheng.framework.domain.course.CourseBase;
 import com.xuecheng.framework.domain.course.CourseMarket;
+import com.xuecheng.framework.domain.course.CoursePic;
 import com.xuecheng.framework.domain.course.Teachplan;
 import com.xuecheng.framework.domain.course.ext.CourseInfo;
 import com.xuecheng.framework.domain.course.ext.TeachplanNode;
@@ -39,6 +40,9 @@ public class CourseService {
 
     @Autowired
     private CourseMarketRepository courseMarketRepository;
+
+    @Autowired
+    private CoursePicRepository coursePicRepository;
 
     //查询课程计划
     public TeachplanNode findTeachplanList(String courseId){
@@ -207,6 +211,44 @@ public class CourseService {
             courseMarket.setId(id);
             courseMarketRepository.save(courseMarket);
             return new ResponseResult(CommonCode.SUCCESS);
+        }
+    }
+
+    //保存课程图片信息
+    @Transactional
+    public ResponseResult addCoursePic(String courseId, String pic) {
+        Optional<CoursePic> optional = coursePicRepository.findById(courseId);
+        CoursePic coursePic = null;
+        if (optional.isPresent()) {
+            coursePic = optional.get();
+        }
+        if (coursePic == null) {
+            coursePic = new CoursePic();
+        }
+        coursePic.setCourseid(courseId);
+        coursePic.setPic(pic);
+        coursePicRepository.save(coursePic);
+        return new ResponseResult(CommonCode.SUCCESS);
+    }
+
+    //查询课程图片列表
+    public CoursePic findCoursePicList(String courseId) {
+        Optional<CoursePic> optional = coursePicRepository.findById(courseId);
+        if (optional.isPresent()) {
+            CoursePic coursePic = optional.get();
+            return coursePic;
+        }
+        return null;
+    }
+
+    //删除课程图片信息
+    @Transactional
+    public ResponseResult deleteCoursePic(String courseId) {
+        long result = coursePicRepository.deleteByCourseid(courseId);
+        if (result > 0) {
+            return new ResponseResult(CommonCode.SUCCESS);
+        } else {
+            return new ResponseResult(CommonCode.FAIL);
         }
     }
 }
