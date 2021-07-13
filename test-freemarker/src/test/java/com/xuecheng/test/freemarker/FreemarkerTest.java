@@ -66,7 +66,7 @@ public class FreemarkerTest {
         stringTemplateLoader.putTemplate("template",templateString);
         configuration.setTemplateLoader(stringTemplateLoader);
         //得到模板
-        Template template = configuration.getTemplate("template","utf‐8");
+        Template template = configuration.getTemplate("template","utf-8");
         //数据模型
         Map map = this.getMap();
         //静态化
@@ -77,6 +77,8 @@ public class FreemarkerTest {
         //输出文件
         FileOutputStream fileOutputStream = new FileOutputStream(new File("d:/test1.html"));
         IOUtils.copy(inputStream, fileOutputStream);
+        inputStream.close();
+        fileOutputStream.close();
     }
 
     public Map getMap(){

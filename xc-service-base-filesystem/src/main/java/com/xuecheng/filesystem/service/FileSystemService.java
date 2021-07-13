@@ -7,6 +7,7 @@ import com.xuecheng.framework.domain.filesystem.response.FileSystemCode;
 import com.xuecheng.framework.domain.filesystem.response.UploadFileResult;
 import com.xuecheng.framework.exception.ExceptionCast;
 import com.xuecheng.framework.model.response.CommonCode;
+import com.xuecheng.framework.model.response.ResponseResult;
 import org.apache.commons.lang3.StringUtils;
 import org.csource.fastdfs.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class FileSystemService {
@@ -117,5 +119,37 @@ public class FileSystemService {
             //抛出异常
             ExceptionCast.cast(FileSystemCode.FS_UPLOADFILE_INITFDFSERROR);
         }
+    }
+
+    /**
+     * 删除图片
+     * @param fileId
+     * @return
+     */
+    public ResponseResult delete(String fileId) {
+        Optional<FileSystem> optional = fileSystemRepository.findById(fileId);
+        if (optional.isPresent()) {
+            try {
+                //初始化fastDFS
+                initFdfsConfig();
+                //创建trackerClient
+                TrackerClient trackerClient = new TrackerClient();
+                //获取trackerServer
+                TrackerServer trackerServer = trackerClient.getConnection();
+                //得到Storage服务器
+                StorageServer storeStorage = trackerClient.getStoreStorage(trackerServer);
+                //创建storageClient1来上传文件
+                StorageClient1 storageClient1 = new StorageClient1(trackerServer, storeStorage);
+                //删除图片
+                int result = storageClient1.delete_file1(fileId);
+                if (result == 0) {
+                    fileSystemRepository.deleteById(fileId);
+                    return new ResponseResult(CommonCode.SUCCESS);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return new ResponseResult(CommonCode.FAIL);
     }
 }

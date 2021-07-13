@@ -1,6 +1,5 @@
 package com.xuecheng.manage_cms.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import com.xuecheng.api.cms.CmsTemplateControllerApi;
 import com.xuecheng.framework.domain.cms.CmsTemplate;
 import com.xuecheng.framework.domain.cms.request.QueryTemplateRequest;
@@ -34,8 +33,7 @@ public class CmsTemplateController implements CmsTemplateControllerApi {
 
     @Override
     @PostMapping("/add")
-    public CmsTemplateResult add(String cmsTemplateStr, @RequestParam(value = "file") MultipartFile file) {
-        CmsTemplate cmsTemplate = JSONObject.parseObject(cmsTemplateStr, CmsTemplate.class);
+    public CmsTemplateResult add(CmsTemplate cmsTemplate,MultipartFile file) {
         return cmsTemplateService.add(cmsTemplate,file);
     }
 
@@ -53,7 +51,7 @@ public class CmsTemplateController implements CmsTemplateControllerApi {
 
     @Override
     @GetMapping("/get/{id}")
-    public CmsTemplate findById(@PathVariable("id") String id) {
+    public CmsTemplateResult findById(@PathVariable("id") String id) {
         return cmsTemplateService.findById(id);
     }
 }

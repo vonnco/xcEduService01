@@ -36,37 +36,48 @@ public class PageService {
     private GridFsTemplate gridFsTemplate;
     @Autowired
     private GridFSBucket gridFSBucket;
-
+    //保存html页面到服务器物理路径
     public void savePageToServerPath(String pageId){
-        Optional<CmsPage> optional = cmsPageRepository.findById(pageId);
-        if (optional.isPresent()){
-            CmsPage cmsPage = optional.get();
-            String siteId = cmsPage.getSiteId();
-            CmsSite cmsSite = this.getCmsSiteById(siteId);
-            String path = cmsPage.getPagePhysicalPath()+cmsPage.getPageName();
-            String htmlFileId = cmsPage.getHtmlFileId();
-            InputStream inputStream = this.getFileById(htmlFileId);
-            if(inputStream == null){
-                LOGGER.error("getFileById inputStream is null,htmlFileId:{}",htmlFileId);
-                ExceptionCast.cast(CmsCode.CMS_GENERATEHTML_HTMLISNULL);
-            }
-            FileOutputStream fileOutputStream = null;
+        //根据pageId查询cmsPage
+        CmsPage cmsPage = this.findCmsPageById(pageId);
+        //处理异常
+        if (cmsPage == null) {
+            ExceptionCast.cast(CmsCode.CMS_PAGE_NOTEXISTS);
+        }
+        //得到站点Id
+        String siteId = cmsPage.getSiteId();
+        //根据siteId查询cmsSite
+        CmsSite cmsSite = this.findCmsSiteById(siteId);
+        //拼装页面下载路径（站点物理路径+页面物理路+页面名称）
+        String path = cmsSite.getSitePhysicalPath()+cmsPage.getPagePhysicalPath()+cmsPage.getPageName();
+        //得到html的文件id
+        String htmlFileId = cmsPage.getHtmlFileId();
+        //根据htmlFileId得到文件输入流
+        InputStream inputStream = this.getFileById(htmlFileId);
+        //处理异常
+        if(inputStream == null){
+            LOGGER.error("getFileById inputStream is null,htmlFileId:{}",htmlFileId);
+            ExceptionCast.cast(CmsCode.CMS_GENERATEHTML_HTMLISNULL);
+        }
+        //定义文件输出流
+        FileOutputStream fileOutputStream = null;
+        try {
+            fileOutputStream = new FileOutputStream(new File(path));
+            //下载页面文件
+            IOUtils.copy(inputStream,fileOutputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            //关闭输入、输出流
             try {
-                fileOutputStream = new FileOutputStream(new File(path));
-                IOUtils.copy(inputStream,fileOutputStream);
+                inputStream.close();
             } catch (IOException e) {
                 e.printStackTrace();
-            } finally {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    fileOutputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            }
+            try {
+                fileOutputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -82,9 +93,17 @@ public class PageService {
         }
         return null;
     }
-    //根据站点id得到站点
-    public CmsSite getCmsSiteById(String siteId){
+    //根据站点id得到站点信息
+    public CmsSite findCmsSiteById(String siteId){
         Optional<CmsSite> optional = cmsSiteRepository.findById(siteId);
+        if (optional.isPresent()){
+            return optional.get();
+        }
+        return null;
+    }
+    //根据页面id得到页面信息
+    public CmsPage findCmsPageById(String pageId){
+        Optional<CmsPage> optional = cmsPageRepository.findById(pageId);
         if (optional.isPresent()){
             return optional.get();
         }

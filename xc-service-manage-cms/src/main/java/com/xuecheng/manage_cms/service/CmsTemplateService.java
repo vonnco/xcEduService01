@@ -75,9 +75,6 @@ public class CmsTemplateService {
         if (StringUtils.isNoneEmpty(queryTemplateRequest.getSiteId())) {
             cmsTemplate.setSiteId(queryTemplateRequest.getSiteId());
         }
-        if (StringUtils.isNoneEmpty(queryTemplateRequest.getTemplateFileId())) {
-            cmsTemplate.setTemplateId(queryTemplateRequest.getTemplateFileId());
-        }
         if (StringUtils.isNoneEmpty(queryTemplateRequest.getTemplateName())) {
             cmsTemplate.setTemplateName(queryTemplateRequest.getTemplateName());
         }
@@ -129,13 +126,13 @@ public class CmsTemplateService {
      * @param id
      * @return
      */
-    public CmsTemplate findById(String id) {
+    public CmsTemplateResult findById(String id) {
         Optional<CmsTemplate> optional = cmsTemplateRepository.findById(id);
         if (optional.isPresent()) {
             CmsTemplate cmsTemplate = optional.get();
-            return cmsTemplate;
+            return new CmsTemplateResult(CommonCode.SUCCESS,cmsTemplate);
         }
-        return null;
+        return new CmsTemplateResult(CommonCode.FAIL,null);
     }
 
     /**
@@ -146,7 +143,7 @@ public class CmsTemplateService {
      * @return
      */
     public CmsTemplateResult update(String id, CmsTemplate cmsTemplate) {
-        CmsTemplate one = this.findById(id);
+        CmsTemplate one = this.findById(id).getCmsTemplate();
         if (one != null) {
             one.setTemplateName(cmsTemplate.getTemplateName());
             one.setSiteId(cmsTemplate.getSiteId());
@@ -165,7 +162,7 @@ public class CmsTemplateService {
      * @return
      */
     public ResponseResult delete(String id) {
-        CmsTemplate cmsTemplate = this.findById(id);
+        CmsTemplate cmsTemplate = this.findById(id).getCmsTemplate();
         if (cmsTemplate != null){
             //根据文件id删除fs.files和fs.chunks中的记录
             gridFsTemplate.delete(Query.query(Criteria.where("_id").is(cmsTemplate.getTemplateFileId())));

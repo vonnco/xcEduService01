@@ -15,4 +15,8 @@ public class TeachplanNode extends Teachplan {
 
     List<TeachplanNode> children;
 
+    //媒资信息
+    String mediaId;
+    String mediaFileOriginalName;
+
 }

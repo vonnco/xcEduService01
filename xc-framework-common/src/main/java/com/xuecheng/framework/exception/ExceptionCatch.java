@@ -36,8 +36,9 @@ public class ExceptionCatch {
     public ResponseResult exception(Exception e){
         //记录日志
         LOGGER.error("catch exception:{}",e.getMessage());
-        if(EXCEPTIONS == null)
+        if(EXCEPTIONS == null) {
             EXCEPTIONS = builder.build();
+        }
         final ResultCode resultCode = EXCEPTIONS.get(e.getClass());
         final ResponseResult responseResult;
         if (resultCode != null) {

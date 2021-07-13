@@ -1,12 +1,11 @@
 package com.xuecheng.manage_course.controller;
 
 import com.xuecheng.api.course.CourseControllerApi;
-import com.xuecheng.framework.domain.course.CourseBase;
-import com.xuecheng.framework.domain.course.CourseMarket;
-import com.xuecheng.framework.domain.course.CoursePic;
-import com.xuecheng.framework.domain.course.Teachplan;
+import com.xuecheng.framework.domain.course.*;
+import com.xuecheng.framework.domain.course.ext.CourseView;
 import com.xuecheng.framework.domain.course.ext.TeachplanNode;
 import com.xuecheng.framework.domain.course.request.CourseListRequest;
+import com.xuecheng.framework.domain.course.response.CoursePublishResult;
 import com.xuecheng.framework.model.response.QueryResponseResult;
 import com.xuecheng.framework.model.response.ResponseResult;
 import com.xuecheng.manage_course.service.CourseService;
@@ -88,5 +87,29 @@ public class CourseController implements CourseControllerApi {
     @DeleteMapping("/coursepic/delete")
     public ResponseResult deleteCoursePic(@RequestParam("courseId") String courseId) {
         return courseService.deleteCoursePic(courseId);
+    }
+
+    @Override
+    @GetMapping("/courseview/{id}")
+    public CourseView courseView(@PathVariable("id") String id) {
+        return courseService.getCourseView(id);
+    }
+
+    @Override
+    @PostMapping("/preview/{id}")
+    public CoursePublishResult preview(@PathVariable("id") String id) {
+        return courseService.preview(id);
+    }
+
+    @Override
+    @PostMapping("/publish/{id}")
+    public CoursePublishResult publish(@PathVariable("id") String id) {
+        return courseService.publish(id);
+    }
+
+    @Override
+    @PostMapping("/savemedia")
+    public ResponseResult saveMedia(@RequestBody TeachplanMedia teachplanMedia) {
+        return courseService.saveMedia(teachplanMedia);
     }
 }

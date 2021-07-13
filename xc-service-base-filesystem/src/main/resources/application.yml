@@ -26,4 +26,4 @@ xuecheng:
     connect_timeout_in_seconds: 500
     network_timeout_in_seconds: 3000
     charset: UTF-8
-    tracker_servers: localhost:22122 #多个 trackerServer中间以逗号分隔
+    tracker_servers: 192.168.17.100:22122 #多个 trackerServer中间以逗号分隔

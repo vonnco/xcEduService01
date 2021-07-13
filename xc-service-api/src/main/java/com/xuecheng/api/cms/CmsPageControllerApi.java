@@ -3,6 +3,8 @@ package com.xuecheng.api.cms;
 import com.xuecheng.framework.domain.cms.CmsPage;
 import com.xuecheng.framework.domain.cms.request.QueryPageRequest;
 import com.xuecheng.framework.domain.cms.response.CmsPageResult;
+import com.xuecheng.framework.domain.cms.response.CmsPostPageResult;
+import com.xuecheng.framework.domain.cms.response.GenerateHtmlResult;
 import com.xuecheng.framework.model.response.QueryResponseResult;
 import com.xuecheng.framework.model.response.ResponseResult;
 import io.swagger.annotations.Api;
@@ -24,7 +26,7 @@ public interface CmsPageControllerApi {
     public CmsPageResult add(CmsPage cmsPage);
     //根据id查询页面
     @ApiOperation("根据id查询页面")
-    public CmsPage findById(String id);
+    public CmsPageResult findById(String id);
     //修改页面
     @ApiOperation("修改页面")
     public CmsPageResult edit(String id,CmsPage cmsPage);
@@ -34,4 +36,16 @@ public interface CmsPageControllerApi {
     //发布页面
     @ApiOperation("发布页面")
     public ResponseResult post(String pageId);
+    //获取静态页面文件
+    @ApiOperation("获取静态页面文件")
+    public GenerateHtmlResult getHtml(String pageId);
+    //执行页面静态化
+    @ApiOperation("执行页面静态化")
+    public GenerateHtmlResult generateHtml(String pageId);
+    //保存页面
+    @ApiOperation("保存页面")
+    public CmsPageResult save(CmsPage cmsPage);
+    //一键发布
+    @ApiOperation("一键发布页面")
+    public CmsPostPageResult postPageQuick(CmsPage cmsPage);
 }

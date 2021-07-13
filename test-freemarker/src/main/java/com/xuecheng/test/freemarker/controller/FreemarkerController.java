@@ -18,36 +18,41 @@ public class FreemarkerController {
 
     @RequestMapping("/test1")
     public String freemarker(Map<String,Object> map){
-        //向数据模型放数据
+        //map就是freemarker模板所使用的数据
         map.put("name","黑马程序员");
+
+        //学生1
         Student stu1 = new Student();
         stu1.setName("小明");
         stu1.setAge(18);
         stu1.setMoney(1000.86f);
         stu1.setBirthday(new Date());
+        //学生2
         Student stu2 = new Student();
         stu2.setName("小红");
         stu2.setMoney(200.1f);
         stu2.setAge(19);
         stu2.setBirthday(new Date());
-        // stu2.setBirthday(new Date());
+        //朋友列表
         List<Student> friends = new ArrayList<>();
         friends.add(stu1);
+        //给第二名学生设置朋友列表
         stu2.setFriends(friends);
+        //给第二名学生设置最好朋友
         stu2.setBestFriend(stu1);
         List<Student> stus = new ArrayList<>();
         stus.add(stu1);
         stus.add(stu2);
-        //向数据模型放数据
+        //将学生列表放在数据模型中
         map.put("stus",stus);
         //准备map数据
         HashMap<String,Student> stuMap = new HashMap<>();
         stuMap.put("stu1",stu1);
         stuMap.put("stu2",stu2);
+        map.put("stuMap",stuMap);
         //向数据模型放数据
         map.put("stu1",stu1);
         //向数据模型放数据
-        map.put("stuMap",stuMap);
         map.put("point", 102920122);
         //返回模板文件名称
         return "test1";

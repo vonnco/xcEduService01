@@ -33,11 +33,11 @@ public class GridFsTemplateTest {
     @Test
     public void testGridFs() throws FileNotFoundException {
         //要存储的文件
-        File file = new File("d:/index_banner.ftl");
+        File file = new File("d:/course.ftl");
         //定义输入流
-        FileInputStream inputStram = new FileInputStream(file);
+        FileInputStream inputStream = new FileInputStream(file);
         //向GridFS存储文件
-        ObjectId objectId = gridFsTemplate.store(inputStram, "轮播图测试文件01", "");
+        ObjectId objectId = gridFsTemplate.store(inputStream, "课程详情模板文件", "");
         //得到文件ID
         String fileId = objectId.toString();
         System.out.println(fileId);
@@ -45,7 +45,7 @@ public class GridFsTemplateTest {
     //测试取文件
     @Test
     public void queryFile() throws IOException {
-        String fileId = "5cd14a402047c307606989e0";
+        String fileId = "60cb0ceb82a71420f46339d1";
         //根据id查询文件
         GridFSFile gridFSFile = gridFsTemplate.findOne(Query.query(Criteria.where("_id").is(fileId)));
         //打开下载流对象
@@ -56,5 +56,10 @@ public class GridFsTemplateTest {
         String s = IOUtils.toString(gridFsResource.getInputStream(), "UTF-8");
         System.out.println(s);
     }
-
+    //删除文件
+    @Test
+    public void testDelFile() {
+        //根据文件id删除fs.files和fs.chunks中的记录
+        gridFsTemplate.delete(Query.query(Criteria.where("_id").is("60cb0ceb82a71420f46339d1")));
+    }
 }

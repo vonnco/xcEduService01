@@ -68,6 +68,7 @@ public class CmsPageRepositoryTest {
             System.out.println(save);
         }
     }
+    //根据条件查询全部
     @Test
     public void testFindAllByExample(){
         //分页参数
@@ -81,10 +82,10 @@ public class CmsPageRepositoryTest {
         cmsPage.setPageAliase("test");
         //条件匹配器
         ExampleMatcher exampleMatcher = ExampleMatcher.matching();
-        exampleMatcher = exampleMatcher.withMatcher("pageAliase",ExampleMatcher.GenericPropertyMatchers.contains());
         //页面别名模糊查询，需要自定义字符串的匹配器实现模糊查询
         //ExampleMatcher.GenericPropertyMatchers.contains() 包含
         //ExampleMatcher.GenericPropertyMatchers.startsWith()//开头匹配
+        exampleMatcher = exampleMatcher.withMatcher("pageAliase",ExampleMatcher.GenericPropertyMatchers.contains());
         //定义Example
         Example example = Example.of(cmsPage,exampleMatcher);
         Page all = cmsPageRepository.findAll(example, pageable);

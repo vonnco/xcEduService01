@@ -24,11 +24,11 @@ public interface CmsTemplateControllerApi {
     })
     public QueryResponseResult findList(int page, int size, QueryTemplateRequest queryTemplateRequest);
     @ApiOperation("新增模板")
-    public CmsTemplateResult add(String cmsTemplateStr, MultipartFile file);
+    public CmsTemplateResult add(CmsTemplate cmsTemplate, MultipartFile file);
     @ApiOperation("修改模板")
     public CmsTemplateResult edit(String id,CmsTemplate cmsTemplate);
     @ApiOperation("删除模板")
     public ResponseResult delete(String id);
     @ApiOperation("根据Id查询模板")
-    public CmsTemplate findById(String id);
+    public CmsTemplateResult findById(String id);
 }

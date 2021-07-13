@@ -23,6 +23,7 @@ public class CmsPagePreviewController extends BaseController {
         try {
             ServletOutputStream outputStream = response.getOutputStream();
             outputStream.write(pageHtml.getBytes("utf-8"));
+            outputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

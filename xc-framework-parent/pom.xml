@@ -5,6 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <modules>
         <module>../test-fastdfs</module>
+        <module>../xc-govern-center</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

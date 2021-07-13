@@ -5,7 +5,7 @@ spring:
     name: xc-service-manage-cms-client
   data:
     mongodb:
-      uri:  mongodb://root:root@localhost:27017
+      uri:  mongodb://root:123456@localhost:27017
       database: xc_cms
   rabbitmq:
     host: 127.0.0.1
@@ -16,5 +16,5 @@ spring:
 xuecheng:
   mq:
   #cms客户端监控的队列名称（不同的客户端监控的队列不能重复）
-    queue: queue_cms_postpage_01
-    routingKey: 5a751fab6abb5044e0d19ea1 #此routingKey为门户站点ID
+    queue: queue_cms_postpage_03
+    routingKey: 60e2c2fe36b02443742e89a8 #此routingKey为门户站点ID

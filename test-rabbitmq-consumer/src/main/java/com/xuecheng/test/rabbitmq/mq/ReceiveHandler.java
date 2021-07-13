@@ -19,4 +19,8 @@ public class ReceiveHandler {
         System.out.println("receive message is:"+msg);
     }
 
+    @RabbitListener(queues = {RabbitmqConfig.QUEUE_INFORM_SMS})
+    public void send_sms(String msg,Message message,Channel channel){
+        System.out.println("receive message is:"+msg);
+    }
 }
