@@ -15,11 +15,11 @@ import java.util.Date;
 @ToString
 @Entity
 @Table(name="teachplan_media_pub")
-@GenericGenerator(name = "jpa‐assigned", strategy = "assigned")
+@GenericGenerator(name = "jpa-assigned", strategy = "assigned")
 public class TeachplanMediaPub implements Serializable {
     private static final long serialVersionUID = -916357110051689485L;
     @Id
-    @GeneratedValue(generator = "jpa‐assigned")
+    @GeneratedValue(generator = "jpa-assigned")
     @Column(name="teachplan_id")
     private String teachplanId;
     @Column(name="media_id")
