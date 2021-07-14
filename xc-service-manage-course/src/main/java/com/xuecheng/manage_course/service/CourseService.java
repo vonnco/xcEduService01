@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -60,6 +61,9 @@ public class CourseService {
 
     @Autowired
     private TeachplanMediaRepository teachplanMediaRepository;
+
+    @Autowired
+    private TeachplanMediaPubRepository teachplanMediaPubRepository;
 
     @Value("${course-publish.dataUrlPre}")
     private String publish_dataUrlPre;
@@ -364,6 +368,8 @@ public class CourseService {
         }
         //页面url
         String pageUrl = cmsPostPageResult.getPageUrl();
+        //向teachplan_media_pub中保存课程媒资信息
+        this.saveTeachplanMediaPub(id);
         return new CoursePublishResult(CommonCode.SUCCESS,pageUrl);
     }
 
@@ -475,6 +481,19 @@ public class CourseService {
         one.setMediaFileOriginalName(teachplanMedia.getMediaFileOriginalName());
         teachplanMediaRepository.save(one);
         return new ResponseResult(CommonCode.SUCCESS);
+    }
+
+    //保存课程计划媒资信息
+    private void saveTeachplanMediaPub(String courseId) {
+        teachplanMediaPubRepository.deleteByCourseId(courseId);
+        List<TeachplanMedia> teachplanMediaList = teachplanMediaRepository.findByCourseId(courseId);
+        List<TeachplanMediaPub> teachplanMediaPubList = new ArrayList<>();
+        for (TeachplanMedia teachplanMedia : teachplanMediaList) {
+            TeachplanMediaPub teachplanMediaPub = new TeachplanMediaPub();
+            BeanUtils.copyProperties(teachplanMedia,teachplanMediaPub);
+            teachplanMediaPubList.add(teachplanMediaPub);
+        }
+        teachplanMediaPubRepository.saveAll(teachplanMediaPubList);
     }
 }
 
