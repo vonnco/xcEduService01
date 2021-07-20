@@ -71,17 +71,17 @@ class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
                 .scopes("app");//客户端范围，名称自定义，必填*/
     }
 
-    //token的存储方法
-//    @Bean
-//    public InMemoryTokenStore tokenStore() {
-//        //将令牌存储到内存
-//        return new InMemoryTokenStore();
-//    }
-//    @Bean
-//    public TokenStore tokenStore(RedisConnectionFactory redisConnectionFactory){
-//        RedisTokenStore redisTokenStore = new RedisTokenStore(redisConnectionFactory);
-//        return redisTokenStore;
-//    }
+    /*//token的存储方法
+    @Bean
+    public InMemoryTokenStore tokenStore() {
+        //将令牌存储到内存
+        return new InMemoryTokenStore();
+    }
+    @Bean
+    public TokenStore tokenStore(RedisConnectionFactory redisConnectionFactory){
+        RedisTokenStore redisTokenStore = new RedisTokenStore(redisConnectionFactory);
+        return redisTokenStore;
+    }*/
     @Bean
     @Autowired
     public TokenStore tokenStore(JwtAccessTokenConverter jwtAccessTokenConverter) {

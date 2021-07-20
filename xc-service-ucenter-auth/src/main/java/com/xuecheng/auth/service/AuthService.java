@@ -6,6 +6,7 @@ import com.xuecheng.framework.client.XcServiceList;
 import com.xuecheng.framework.domain.ucenter.ext.AuthToken;
 import com.xuecheng.framework.domain.ucenter.response.AuthCode;
 import com.xuecheng.framework.exception.ExceptionCast;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,6 +116,15 @@ public class AuthService {
                 map.get("access_token") == null ||
                 map.get("refresh_token") == null ||
                 map.get("jti") == null) {//jti是jwt令牌的唯一标识作为用户身份令牌
+            //获取spring security返回的错误信息
+            String error_description = (String) map.get("error_description");
+            if(StringUtils.isNotEmpty(error_description)){
+                if(error_description.equals("坏的凭证")){
+                    ExceptionCast.cast(AuthCode.AUTH_CREDENTIAL_ERROR);
+                }else if(error_description.indexOf("UserDetailsService returned null")>=0){
+                    ExceptionCast.cast(AuthCode.AUTH_ACCOUNT_NOTEXISTS);
+                }
+            }
             ExceptionCast.cast(AuthCode.AUTH_LOGIN_APPLYTOKEN_FAIL);
         }
         AuthToken authToken = new AuthToken();
@@ -137,5 +147,31 @@ public class AuthService {
         //进行base64编码
         byte[] encode = Base64.encode(string.getBytes());
         return "Basic " + new String(encode);
+    }
+
+    //查询userjwt令牌
+    public AuthToken getUserToken(String access_token) {
+        //令牌名称
+        String name = "user_token:" + access_token;
+        String authTokenString = stringRedisTemplate.opsForValue().get(name);
+        if(authTokenString!=null){
+            AuthToken authToken = null;
+            try {
+                authToken = JSON.parseObject(authTokenString, AuthToken.class);
+            } catch (Exception e) {
+                LOGGER.error("getUserToken from redis and execute JSON.parseObject error {}",e.getMessage());
+                e.printStackTrace();
+            }
+            return authToken;
+        }
+        return null;
+    }
+
+    //从redis中删除令牌
+    public boolean delToken(String access_token) {
+        //令牌名称
+        String name = "user_token:" + access_token;
+        Boolean result = stringRedisTemplate.delete(name);
+        return result;
     }
 }

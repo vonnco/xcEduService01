@@ -5,7 +5,7 @@ spring:
     name: xc-service-manage-cms
   data:
     mongodb:
-      uri:  mongodb://root:123456@localhost:27017
+      uri: mongodb://root:123456@localhost:27017
       database: xc_cms
   freemarker:
     cache: false #关闭模板缓存，方便测试
