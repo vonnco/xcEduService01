@@ -4,4 +4,6 @@ import com.xuecheng.framework.domain.learning.XcLearningCourse;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface XcLearningCourseRepository extends JpaRepository<XcLearningCourse,String> {
+    //根据课程id和用户id查询信息
+    XcLearningCourse findByCourseIdAndUserId(String courseId,String userId);
 }
