@@ -41,16 +41,23 @@ public class MediaUploadService {
     @Value("${xc-service-manage-media.mq.routingkey-media-video}")
     private String routingkey_media_video;
 
-    //文件上传注册
+    //文件上传注册(判断文件是否存在)
     public ResponseResult register(String fileMd5, String fileName, Long fileSize, String mimetype, String fileExt) {
+        //获取文件目录路径
         String fileFolderPath = this.getFileFolderPath(fileMd5);
+        //获取文件路径
         String filePath = this.getFilePath(fileMd5, fileExt);
+        //创建文件对象
         File file = new File(filePath);
+        //查询文件
         Optional<MediaFile> optional = mediaFileRepository.findById(fileMd5);
+        //文件已存在抛出异常
         if (file.exists() && optional.isPresent()) {
             ExceptionCast.cast(MediaCode.UPLOAD_FILE_REGISTER_EXIST);
         }
+        //创建文件夹对象
         File fileFolder = new File(fileFolderPath);
+        //如果文件夹不存在则创建文件夹
         if (!fileFolder.exists()) {
             boolean mkdirs = fileFolder.mkdirs();
             if (!mkdirs) {
@@ -62,8 +69,11 @@ public class MediaUploadService {
 
     //校验分块文件是否存在
     public CheckChunkResult checkChunk(String fileMd5, Integer chunk, Integer chunkSize) {
+        //获取分块文件夹路径
         String chunkFileFolderPath = this.getChunkFileFolderPath(fileMd5);
+        //创建分块文件路径
         File file = new File(chunkFileFolderPath + chunk);
+        //判断分块文件是否存在
         if (file.exists()) {
             return new CheckChunkResult(MediaCode.CHUNK_FILE_EXIST_CHECK,true);
         } else {
@@ -73,11 +83,15 @@ public class MediaUploadService {
 
     //上传分块文件
     public ResponseResult uploadChunk(MultipartFile file, Integer chunk, String fileMd5) {
+        //获取分块文件夹路径
         String chunkFileFolderPath = this.getChunkFileFolderPath(fileMd5);
+        //创建分块文件夹对象
         File chunkFileFolder = new File(chunkFileFolderPath);
+        //分块文件夹不存在则创建
         if (!chunkFileFolder.exists()) {
             chunkFileFolder.mkdirs();
         }
+        //上传文件
         InputStream inputStream = null;
         FileOutputStream fileOutputStream = null;
         try {
@@ -105,10 +119,15 @@ public class MediaUploadService {
 
     //合并分块文件
     public ResponseResult mergeChunks(String fileMd5, String fileName, Long fileSize, String mimetype, String fileExt){
+        //获取分块文件夹路径
         String chunkFileFolderPath = this.getChunkFileFolderPath(fileMd5);
+        //创建分块文件夹对象
         File chunkFileFolder = new File(chunkFileFolderPath);
+        //获取文件夹下的文件数组
         File[] files = chunkFileFolder.listFiles();
+        //数组转集合
         List<File> fileList = Arrays.asList(files);
+        //集合按文件名字升序排序
         Collections.sort(fileList, new Comparator<File>() {
             @Override
             public int compare(File o1, File o2) {
@@ -118,16 +137,23 @@ public class MediaUploadService {
                 return -1;
             }
         });
+        //获取文件路径
         String filePath = this.getFilePath(fileMd5, fileExt);
+        //创建文件对象
         File mergeFile = new File(filePath);
+        //合并文件
         mergeFile = this.mergeFile(mergeFile, fileList);
+        //合并文件失败抛出异常
         if (mergeFile == null) {
             ExceptionCast.cast(MediaCode.MERGE_FILE_FAIL);
         }
+        //校验合并后的文件是否正常
         boolean checkFileMd5 = this.checkFileMd5(mergeFile, fileMd5);
+        //校验失败抛出异常
         if (!checkFileMd5) {
             ExceptionCast.cast(MediaCode.MERGE_FILE_CHECKFAIL);
         }
+        //保存文件信息到数据库
         MediaFile mediaFile = new MediaFile();
         mediaFile.setFileId(fileMd5);
         mediaFile.setFileName(fileMd5+"."+fileExt);
@@ -139,6 +165,7 @@ public class MediaUploadService {
         mediaFile.setFileType(fileExt);//状态为上传成功
         mediaFile.setFileStatus("301002");
         MediaFile save = mediaFileRepository.save(mediaFile);
+        //发送消息处理视频格式
         this.sendProcessVideoMsg(save.getFileId());
         return new ResponseResult(CommonCode.SUCCESS);
     }
@@ -160,11 +187,12 @@ public class MediaUploadService {
         return new ResponseResult(CommonCode.SUCCESS);
     }
 
-    //获取文件目录路径
+    //获取文件夹路径
     private String getFileFolderPath(String fileMd5) {
         return uploadPath+fileMd5.substring(0,1)+"/"+fileMd5.substring(1,2)+"/"+fileMd5+"/";
     }
 
+    //获取分块文件夹路径
     private String getChunkFileFolderPath(String fileMd5){
         return getFileFolderPath(fileMd5)+"chunk/";
     }
@@ -200,6 +228,7 @@ public class MediaUploadService {
         return mergeFile;
     }
 
+    //校验合并的文件是否正常
     private boolean checkFileMd5(File mergeFile,String fileMd5){
         FileInputStream fileInputStream = null;
         try {
